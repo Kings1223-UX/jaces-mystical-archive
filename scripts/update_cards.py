@@ -7,8 +7,21 @@ OUT.mkdir(exist_ok=True)
 API='https://api.scryfall.com/bulk-data/oracle-cards'
 HEAD={'User-Agent':'JacesMysticalArchive/1.2 (personal playtest proxy website)','Accept':'application/json'}
 def get(url):return urllib.request.urlopen(urllib.request.Request(url,headers=HEAD),timeout=120)
-with get(API) as response:meta=json.load(response)
-version=meta['updated_at']
+with get(API) as response:
+    meta = json.load(response)
+# Support a response wrapped in a "data" object.
+if isinstance(meta, dict) and isinstance(meta.get("data"), dict):
+    meta = meta["data"]
+if not isinstance(meta, dict):
+    raise RuntimeError(
+        "Unexpected Scryfall response format."
+    )
+if "download_uri" not in meta:
+    raise RuntimeError(
+        "Scryfall did not provide a download_uri. "
+        f"Response: {json.dumps(meta)[:1500]}"
+    )
+version = meta.get("updated_at", "unknown")
 oldfile=OUT/'database-version.json'
 if oldfile.exists():
  try:
