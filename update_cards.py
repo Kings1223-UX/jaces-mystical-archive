@@ -5,7 +5,7 @@ ROOT=pathlib.Path(__file__).resolve().parents[1]
 OUT=ROOT/'public'
 OUT.mkdir(exist_ok=True)
 API='https://api.scryfall.com/bulk-data/oracle-cards'
-HEAD={'User-Agent':'MTGProxyStudio/0.9 (personal playtest proxy website)','Accept':'application/json'}
+HEAD={'User-Agent':'JacesMysticalArchive/1.2 (personal playtest proxy website)','Accept':'application/json'}
 def get(url):return urllib.request.urlopen(urllib.request.Request(url,headers=HEAD),timeout=120)
 with get(API) as response:meta=json.load(response)
 version=meta['updated_at']
